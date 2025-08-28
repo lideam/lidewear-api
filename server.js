@@ -14,26 +14,35 @@ const paymentRoutes = require("./routes/payment");
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// ✅ Allow cross-origin requests
+app.use(
+  cors({
+    origin: "*", // you can restrict later to your Flutter app domain if needed
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(express.json());
 
-const PORT = process.env.PORT || 5000;
-
-// Connect to DB
+// ✅ Connect to DB
 connectDB();
 
-// Sample route
-app.get("/", (req, res) => res.send("API is running"));
+// ✅ Healthcheck route
+app.get("/", (req, res) => res.send("🚀 LideWear API is running..."));
 
-// ✅ Use Auth Routes
+// ✅ API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/payment", paymentRoutes);
+app.use("/api/payment", paymentRoutes);
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
+// ✅ Use process.env.PORT (important for Render)
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
