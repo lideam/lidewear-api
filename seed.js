@@ -1,6 +1,6 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 const Product = require("./models/Product");
-require("dotenv").config();
 
 const seedProducts = [
   {
@@ -36,20 +36,14 @@ const seedProducts = [
 ];
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/fashionstore", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGO_URI)
   .then(async () => {
-    console.log("MongoDB connected");
+    console.log("✅ MongoDB connected to Atlas");
 
-    // clear old products
     await Product.deleteMany();
-
-    // insert new ones
     const inserted = await Product.insertMany(seedProducts);
-    console.log("Products seeded:", inserted);
+    console.log("✅ Products seeded:", inserted);
 
     mongoose.connection.close();
   })
-  .catch((err) => console.error(err));
+  .catch((err) => console.error("❌ Error connecting:", err));
